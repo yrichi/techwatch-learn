@@ -205,7 +205,8 @@ function renderDoc(p){
   const pv=p.provenance||{}; const fr=pv.lastFreshnessCheck||pv.reviewedAt||pv.generatedAt;
   let h='';
   if(pv.stale) h+='<div class="stale">⚠ Sources à re-vérifier'+((pv.stale.driftedClaims||[]).length?' — citations dérivées : '+pv.stale.driftedClaims.join(', '):'')+((pv.stale.unreachableSources||[]).length?' · injoignables : '+pv.stale.unreachableSources.join(', '):'')+'</div>';
-  h+='<div class="freshness">Vérifié au '+esc(fr||'?')+(pv.humanReviewed?' · relu humainement':'')+(pv.judge?' · jury '+esc(pv.judge.score)+'/100':'')+'</div>';
+  const rc=pv.regenCheck; const regenTxt=rc?(rc.verdict==='a-regenerer'?' · <span style="color:#b45309">⚠ '+(rc.changed||0)+' source(s) évoluée(s) → régénérer</span>':rc.verdict==='inchange'?' · sources inchangées depuis génération':rc.verdict==='baseline'?' · empreintes sources établies':''):'';
+  h+='<div class="freshness">Vérifié au '+esc(fr||'?')+(pv.humanReviewed?' · relu humainement':'')+(pv.judge?' · jury '+esc(pv.judge.score)+'/100':'')+regenTxt+'</div>';
   if(p.technology){ const va=pv.versionAudit||null, lagWarn=va&&va.lag&&va.lag!=='à jour';
     h+='<div class="verbanner"><b>'+esc(p.technology.name)+'</b> — ce pack décrit <b>v'+esc(p.technology.currentVersion)+'</b>'
       +(va&&va.latestKnown?' · dernière connue <b>v'+esc(va.latestKnown)+'</b>':'')
